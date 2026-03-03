@@ -1,47 +1,53 @@
-"use client"
-import { LogoutLink, useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
-import React, { useEffect, useState } from 'react'
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { app } from '@/config/FirebaseConfig';
-import { useRouter } from 'next/navigation';
-import MeetingType from './meeting-type/page';
+import { app } from "@/config/FirebaseConfig";
+import { useRouter } from "next/navigation";
+import MeetingType from "./meeting-type/page";
+
 function Dashboard() {
-
   const db = getFirestore(app);
-  const {user}=useKindeBrowserClient();
-  const [loading,setLoading]=useState(true);
-  const router=useRouter();
+  const { user, isLoading: userLoading } = useKindeBrowserClient();
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  useEffect(()=>{
-    user&&isBusinessRegistered();
-  },[user])
-
-
-  const isBusinessRegistered = async () => {
-    const docRef = doc(db, "Business", user.email);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      setLoading(false)
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-      setLoading(false)
-      router.replace('/create-business');
+  useEffect(() => {
+    if (!userLoading) {
+      if (user?.email) {
+        checkBusinessRegistration();
+      } else {
+        setLoading(false);
+      }
     }
-  }
+  }, [user, userLoading]);
 
-  if(loading)
-  {
-    return <h2>Loading...</h2>
+  const checkBusinessRegistration = async () => {
+    try {
+      const docRef = doc(db, "Business", user.email);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setLoading(false);
+      } else {
+        router.replace("/create-business");
+      }
+    } catch (error) {
+      console.error("Firestore error:", error);
+      setLoading(false);
+    }
+  };
+
+  if (loading || userLoading) {
+    return <h2>Loading...</h2>;
   }
 
   return (
     <div>
-      <MeetingType/>
+      <MeetingType />
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
