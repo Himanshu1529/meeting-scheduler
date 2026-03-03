@@ -14,6 +14,7 @@ function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    // Only run after user loading is done
     if (!userLoading) {
       if (user?.email) {
         checkBusinessRegistration();
@@ -29,12 +30,15 @@ function Dashboard() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
+        // Business exists
         setLoading(false);
       } else {
+        // Business not found, redirect
         router.replace("/create-business");
       }
     } catch (error) {
       console.error("Firestore error:", error);
+      // Show a user-friendly message if desired
       setLoading(false);
     }
   };
