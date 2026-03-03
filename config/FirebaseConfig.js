@@ -9,7 +9,7 @@ import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "meeting-schedular-7e82e.firebaseapp.com",
-  databaseURL: "https://apps-e02e4-default-rtdb.firebaseio.com",
+  databaseURL: "https://meeting-schedular-7e82e-default-rtdb.firebaseio.com/",
   projectId: "meeting-schedular-7e82e",
   storageBucket: "meeting-schedular-7e82e.firebasestorage.app",
   messagingSenderId: "1050346836100",
